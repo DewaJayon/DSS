@@ -9,10 +9,8 @@ class AHP:
 
     def ahp_method(file_path, sheet_name):
 
-        f_path = file_path
-
         # Membaca dataset dari sheet AHP
-        df_ahp = pd.read_excel(f_path, sheet_name, header=0, index_col=0)
+        df_ahp = pd.read_excel(file_path, sheet_name, header=0, index_col=0)
 
         # Menghapus kolom dan baris yang tidak perlu (jika ada)
         df_ahp = df_ahp.dropna(how='all').dropna(axis=1, how='all')

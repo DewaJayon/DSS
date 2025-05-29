@@ -34,7 +34,6 @@ class MARCOS:
         # Diasumsikan kategori berada di baris terakhir (indeks -1)
         categories = marcos_data.iloc[-1, 1:].values
 
-        # Menampilkan hasil
         # print("Kategori untuk setiap kriteria:")
         # for i, kat in enumerate(categories, start=1):
         #     print(f"C{i}: {kat}")
