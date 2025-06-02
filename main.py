@@ -1,5 +1,6 @@
 from method.ahp import AHP as ahp
 from method.marcos import MARCOS as marcos
+from method.moora import MOORA as moora
 import pandas as pd
 from tabulate import tabulate
 from utils.copyright import copyright
@@ -28,6 +29,9 @@ if cr < 0.1:
     print("Ranking:")
     print(tabulate(rank_df.round(4), headers='keys', tablefmt='grid'))
     print("\n")
+
+    print("\n========Metode MOORA========")
+    moora.moora_method(datasheet="datasheet.xlsx", sheet_name="MOORA", weight=weight)
 
 else:
     print("Tidak konsisten")
