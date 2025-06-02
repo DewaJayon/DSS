@@ -51,7 +51,7 @@ class MARCOS:
         for i, kat in enumerate(categories):
             if kat == "BENEFIT":
                 marcos_data = marcos_data / marcos_data.max()
-            elif kat == "COST":
+            else:
                 marcos_data = marcos_data.min() / marcos_data
 
         # print("Normalisasi Matriks:")

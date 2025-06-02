@@ -6,7 +6,7 @@ from utils.copyright import copyright
 
 copyright()
 
-weight, cr, df_ahp = ahp.ahp_method(file_path="dataset.xlsx", sheet_name="AHP")
+weight, cr, df_ahp = ahp.ahp_method(file_path="datasheet.xlsx", sheet_name="AHP")
 
 weight_df = pd.DataFrame({'Bobot': weight.round(4)}, index=df_ahp.index)
 
@@ -20,7 +20,7 @@ if cr < 0.1:
 
     print("\nKonsisten, melanjutkan ke metode MARCOS...")
 
-    fki, rank, marcos_data  = marcos.marcos_method(file_path="dataset.xlsx", sheet_name="MARCOS", weight=weight)
+    fki, rank, marcos_data  = marcos.marcos_method(file_path="datasheet.xlsx", sheet_name="MARCOS", weight=weight)
 
     rank_df = pd.DataFrame({'Fki': fki.round(4), 'Rank': rank.round(4)}, index=marcos_data.index)
 
