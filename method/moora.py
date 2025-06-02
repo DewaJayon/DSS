@@ -13,72 +13,100 @@ class MOORA:
     def moora_method(datasheet, sheet_name, weight):
 
         df_moora = pd.read_excel(datasheet, sheet_name, header=0, index_col=0)
-        print("Dataset:")
-        print(tabulate(df_moora, headers=df_moora.columns, tablefmt='grid'))
-        print("\n")
+        # print("Dataset:")
+        # print(tabulate(df_moora, headers=df_moora.columns, tablefmt='grid'))
+        # print("\n")
 
         # Mengambil baris yang mengandung data kategori
         # Diasumsikan kategori berada di baris terakhir (indeks -1)
         categories = df_moora.iloc[-1].values
         
-        print("Kategori untuk setiap kriteria:")
-        for i, category in enumerate(categories, start=1):
-            print(f"C{i}: {category}")
+        # print("Kategori untuk setiap kriteria:")
+        # for i, category in enumerate(categories, start=1):
+        #     print(f"C{i}: {category}")
 
         # Menghapus baris kategori sebelum dirubah menjadi float
         df_moora = df_moora.iloc[:-1]
         
         # Mengubah baris kategori menjadi float
-        df_numeric = df_moora.iloc[:-1].astype(float)
+        df_moora = df_moora.astype(float)
 
-        print(tabulate(df_moora, headers=df_moora.columns, tablefmt='grid'))
-        print("\n")
+        # print(tabulate(df_moora, headers=df_moora.columns, tablefmt='grid'))
+        # print("\n") 
 
-
-        # Menghitung pembagi untuk normalisasi
-        squared = df_numeric.pow(2)
-        sum_squared = squared.sum(axis=0)
-        denominator = np.sqrt(sum_squared.values)  # Gunakan .values untuk array numpy
+        # Mencari pembagi dengan rumus sqrt
+        pembagi = np.sqrt((df_moora ** 2).sum(axis=0))
         
-        denominator_df = pd.DataFrame([denominator], columns=df_numeric.columns, index=['Pembagi']).round(4)
-        print("Pembagi untuk normalisasi:")
-        print(tabulate(denominator_df, headers='keys', tablefmt='grid'))
-        print("\n")
+        # print("Pembagi per kriteria:")
+        # for i, val in enumerate(pembagi, start=1):
+        #     pembagi_df = pd.DataFrame({'Pembagi': pembagi}, index=df_moora.columns)
+
+        # print(tabulate(pembagi_df.round(), headers='keys', tablefmt='pretty'))
+        # print("\n")
 
         # Normalisasi
-        norm = df_numeric / denominator
+        df_moora_norm = df_moora / pembagi
+        
+        # print("Normalisasi:")
+        # print(tabulate(df_moora_norm.round(4), headers=df_moora.columns, tablefmt='grid'))
+        # print("\n")
 
-        norm_df = pd.DataFrame(norm, columns=df_numeric.columns, index=df_numeric.index).round(4)
-        print("Normalisasi:")
-        print(tabulate(norm_df, headers='keys', tablefmt='grid'))
-        print("\n")
+        # Optimasi nilai atribut
+        df_moora_opt = df_moora_norm * weight
+       
+        # print("Optimasi Nilai Atribut:")
+        # print(tabulate(df_moora_opt.round(4), headers=df_moora.columns, tablefmt='grid'))
+        # print("\n")
 
-        # Optimasi Nilai Atribut
-        optimized = norm * weight
+        # Hitung Nilai Maksimal
+        max_list = []
+        for row_idx in range(len(df_moora_opt)):
+            benefit = 0
+            cost = 0
+            for i, kat in enumerate(categories):
+                val = df_moora_opt.iloc[row_idx, i]
+                if kat.upper() == 'BENEFIT':
+                    benefit += val
+                else:
+                    cost
+            skor = benefit - cost
+            max_list.append(round(skor, 4))
+        
+        # df_maximun = pd.DataFrame({'Maximun': max_list}, index=df_moora.index)
+        # print(tabulate(df_maximun, headers='keys', tablefmt='pretty'))
 
-        optimized_df = pd.DataFrame(optimized, columns=df_numeric.columns, index=df_numeric.index).round(4)
-        print("Optimasi Nilai Atribut:")
-        print(tabulate(optimized_df, headers='keys', tablefmt='grid'))
-        print("\n")
+        # Hitung Nilai minimum
+        min_list = []
+        for row_idx in range(len(df_moora_opt)):
+            benefit = 0
+            cost = 0
+            for i, kat in enumerate(categories):
+                val = df_moora_opt.iloc[row_idx, i]
+                if kat.upper() == 'BENEFIT':
+                    benefit
+                else:
+                    cost += val
+            skor = cost - benefit
+            min_list.append(round(skor, 4))
+        
+        # df_minimun = pd.DataFrame({'Minimun': min_list}, index=df_moora.index)
+        # print(tabulate(df_minimun, headers='keys', tablefmt='pretty'))
 
+        # Menghitung nilai YI
+        yi = np.array(max_list) - np.array(min_list)
+        
+        # df_yi = pd.DataFrame({'Yi': yi.round(4)}, index=df_moora.index)
+        # print(tabulate(df_yi, headers='keys', tablefmt='pretty'))
 
-        # Menentukan maxsimum
-        for i, kat in enumerate(categories):
-            col = optimized.columns[i]
-            if kat == "BENEFIT":
-                optimized[i] = optimized[col].max()
-            elif kat == "COST":
-                optimized[i] = optimized[col].min()
-            else:
-                optimized[i] = 0
+        # Ranking
+        rank = yi.argsort()[::-1].argsort() + 1
+        
+        # df_rank = pd.DataFrame({
+        #     'Maximum': max_list,
+        #     'Minimum': min_list,
+        #     'Yi': yi.round(4), 
+        #     'Rank': rank,
+        #     }, index=df_moora.index)
+        # print(tabulate(df_rank, headers='keys', tablefmt='pretty'))
 
-        result_df = pd.DataFrame({
-            'Max (Benefit)': optimized,
-
-        }).round(4)
-
-        print("Hasil:")
-        print(tabulate(result_df, headers='keys', tablefmt='grid', showindex=False))
-        print("\n")
-
-        return result_df
+        return yi, rank

@@ -31,7 +31,11 @@ if cr < 0.1:
     print("\n")
 
     print("\n========Metode MOORA========")
-    moora.moora_method(datasheet="datasheet.xlsx", sheet_name="MOORA", weight=weight)
+    yi, rank = moora.moora_method(datasheet="datasheet.xlsx", sheet_name="MOORA", weight=weight)
 
+    rank_df = pd.DataFrame({'Yi': yi.round(4), 'Rank': rank.round(4)}, index=marcos_data.index)
+
+    print("Ranking:")
+    print(tabulate(rank_df.round(4), headers='keys', tablefmt='grid'))
 else:
     print("Tidak konsisten")
