@@ -17,7 +17,7 @@ class MARCOS:
         marcos_data = pd.read_excel(file_path, sheet_name, header=0, index_col=0)
 
         # Menghapus kolom dan baris yang tidak perlu
-        marcos_data = marcos_data.dropna(how='all').dropna(axis=1, how='all')
+        # marcos_data = marcos_data.dropna(how='all').dropna(axis=1, how='all')
 
         # print("Dataset:")
         # print(tabulate(marcos_data, headers=marcos_data.columns, tablefmt='grid'))
@@ -32,7 +32,7 @@ class MARCOS:
 
         # Mengambil baris yang mengandung data kategori
         # Diasumsikan kategori berada di baris terakhir (indeks -1)
-        categories = marcos_data.iloc[-1, 1:].values
+        categories = marcos_data.iloc[-1].values
 
         # print("Kategori untuk setiap kriteria:")
         # for i, kat in enumerate(categories, start=1):
@@ -49,10 +49,11 @@ class MARCOS:
 
         # Normalisasi Matriks
         for i, kat in enumerate(categories):
+            col = marcos_data.columns[i]
             if kat == "BENEFIT":
-                marcos_data = marcos_data / marcos_data.max()
+                marcos_data[col] = marcos_data[col] / marcos_data[col].max()
             else:
-                marcos_data = marcos_data.min() / marcos_data
+                marcos_data[col] = marcos_data[col].min() / marcos_data[col]
 
         # print("Normalisasi Matriks:")
         # print(tabulate(marcos_data.round(4), headers=marcos_data.columns, tablefmt='grid'))
